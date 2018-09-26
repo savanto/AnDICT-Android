@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
+import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
 import android.view.Menu;
@@ -17,6 +18,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DictActivity extends Activity {
     /**
@@ -143,7 +147,7 @@ public class DictActivity extends Activity {
                 linearLayout.addView(dictionaryView);
             } else {
                 // Format and display definition
-                final SpannableString definition = formatDefinition(new SpannableString(entry));
+                final SpannableString definition = formatDefinition(entry);
                 final TextView definitionView = new TextView(this);
                 definitionView.setLayoutParams(lp);
                 definitionView.setText(definition);
@@ -156,43 +160,88 @@ public class DictActivity extends Activity {
         }
     }
 
+    private static final char LINK_START = '{';
+    private static final char LINK_END = '}';
+    private static final char ITALICS = '\\';
+
     /**
      * Format plain definition to have links.
      *
-     * @param definition - SpannableString containing unformatted definition.
      * @return SpannableString with the definition formatted.
      */
-    private SpannableString formatDefinition(SpannableString definition) {
-        // The characters to search for that delineate links
-        final String START = "{";
-        final String END = "}";
+    private SpannableString formatDefinition(String definition) {
+        final StringBuilder definitionBuilder = new StringBuilder();
+        final List<Span> spans = new ArrayList<>();
 
-        // Loop through the definition until no more occurrences are found
-        String text = definition.toString();
-        int start = 0, end = 0, offset = 0;
-        while (start > -1 && end > -1) {
-            offset += end + 1;
-            // Definition is truncated each time to avoid finding the same occurrences over and over
-            text = text.substring(end + 1);
-            start = text.indexOf(START);
-            end = text.indexOf(END);
-            if (start > -1 && end > -1 && start < end) {
-                // Get the string of the link
-                final String newLookup = text.substring(start + 1, end);
-                // Make a new clickable span with the action to be performed
-                ClickableSpan cs = new ClickableSpan() {
-                    @Override
-                    public void onClick(View v) {
-                        // Perform lookup on the link string
-                        doLookup(newLookup);
-                        // Update editLookup with the new word
-                        editLookup.setText(newLookup);
+        int linkStart = -1, adjLinkStart = -1, adjItalicsStart = -1;
+        int pos = 0, adjPos = 0;
+        for (final char c : definition.toCharArray()) {
+            switch (c) {
+                case LINK_START:
+                    linkStart = pos;
+                    adjLinkStart = adjPos;
+                    break;
+                case LINK_END:
+                    if (linkStart >= 0 && linkStart < pos) {
+                        spans.add(new Span<ClickableSpan>(
+                                new LinkClickableSpan(definition.substring(linkStart + 1, pos)),
+                                adjLinkStart,
+                                adjPos
+                        ));
                     }
-                };
-                // Set the span to be a link
-                definition.setSpan(cs, start + 1 + offset, end + offset, 0);
+                    linkStart = adjLinkStart = -1;
+                    break;
+                case ITALICS:
+                    if (adjItalicsStart >= 0 && adjItalicsStart < adjPos) {
+                        spans.add(new Span<>(new StyleSpan(Typeface.ITALIC), adjItalicsStart, adjPos));
+                        adjItalicsStart = -1;
+                    } else {
+                        adjItalicsStart = adjPos;
+                    }
+                    break;
+                default:
+                    definitionBuilder.append(c);
+                    ++adjPos;
+                    break;
             }
+            ++pos;
         }
-        return definition;
+
+        final SpannableString definitionSpan = new SpannableString(definitionBuilder.toString());
+        for (final Span span : spans) {
+            span.setSpan(definitionSpan);
+        }
+
+        return definitionSpan;
+    }
+
+    private final class LinkClickableSpan extends ClickableSpan {
+        private final String word;
+
+        LinkClickableSpan(String word) {
+            this.word = word;
+        }
+
+        @Override
+        public void onClick(View widget) {
+            doLookup(this.word);
+            editLookup.setText(this.word);
+        }
+    }
+
+    private static final class Span<T extends CharacterStyle> {
+        private final T what;
+        private final int start;
+        private final int end;
+
+        Span(T what, int start, int end) {
+            this.what = what;
+            this.start = start;
+            this.end = end;
+        }
+
+        void setSpan(SpannableString spannableString) {
+            spannableString.setSpan(this.what, this.start, this.end, 0);
+        }
     }
 }
