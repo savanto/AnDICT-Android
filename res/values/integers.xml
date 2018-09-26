@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <!-- DictSettingsActivity -->
-    <integer name="pref_port_default">2628</integer>
-    <integer name="pref_port_min">0</integer>
-    <integer name="pref_port_max">65535</integer>
-
-</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_server_default"
+        android:dialogMessage="@string/pref_server_message"
+        android:dialogTitle="@string/pref_server_title"
+        android:key="@string/pref_server_key"
+        android:persistent="true"
+        android:title="@string/pref_server_title"
+        />
+
+    <com.savanto.andict.PortPreference
+        android:defaultValue="2628"
+        android:dialogMessage="@string/pref_port_message"
+        android:dialogTitle="@string/pref_port_title"
+        android:key="@string/pref_port_key"
+        android:numeric="integer"
+        android:persistent="true"
+        android:title="@string/pref_port_title"
+        />
+
+    <ListPreference
+        android:defaultValue="@string/pref_database_default"
+        android:dialogTitle="@string/pref_database_title"
+        android:entries="@array/pref_database_entries"
+        android:entryValues="@array/pref_database_entries"
+        android:key="@string/pref_database_key"
+        android:persistent="true"
+        android:title="@string/pref_database_title"
+        />
+
+</PreferenceScreen>

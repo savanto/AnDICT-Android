@@ -1,0 +1,15 @@
+[package]
+name = "android-ffi"
+version = "0.1.0"
+publish = false
+
+[lib]
+crate-type = ["dylib"]
+
+[target.'cfg(target_os="android")'.dependencies]
+jni = { version = "0.10.2", default-features = false }
+dictp = { git = "https://gitlab.com/savanto/dictp.rs.git", tag = "v0.1.0" }
+
+[profile.release]
+lto = true
+panic = "abort"
