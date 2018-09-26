@@ -34,26 +34,18 @@ pub mod android {
             Ok(dict) => {
                 let entries: Vec<Definition> = dict.collect();
                 let entries_array = env.new_object_array(
-                    (2 * entries.len()) as i32,
+                    entries.len() as i32,
                     java_string_class,
                     JObject::null()
                 ).unwrap();
 
-                let mut index: i32 = 0;
-                for entry in entries {
+                for (index, entry) in entries.iter().enumerate() {
+                    let defn = format!("{}\n{}", entry.source, entry.definition);
                     env.set_object_array_element(
                         entries_array,
-                        index,
-                        JObject::from(env.new_string(entry.source).unwrap())
+                        index as i32,
+                        JObject::from(env.new_string(defn).unwrap())
                     ).unwrap();
-                    index += 1;
-
-                    env.set_object_array_element(
-                        entries_array,
-                        index,
-                        JObject::from(env.new_string(entry.definition).unwrap())
-                    ).unwrap();
-                    index += 1;
                 }
 
                 entries_array

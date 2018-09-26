@@ -6,8 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
@@ -16,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class DictActivity extends Activity {
     /**
      * User interface elements
      **/
-    private LinearLayout linearLayout; // LinearLayout within ScrollView; holds the retrieved definitions
+    private DictAdapter definitionsAdapter;
     private TextView connectionStatus; // TextView displaying the status of the lookup
     private EditText editLookup;       // EditText into which user enters word to lookup
 
@@ -44,7 +44,10 @@ public class DictActivity extends Activity {
         editLookup = findViewById(R.id.edit_word);
         final Button buttonLookup = findViewById(R.id.button_lookup);
         connectionStatus = findViewById(R.id.connection_status);
-        linearLayout = findViewById(R.id.linear_layout);
+        definitionsAdapter = new DictAdapter();
+        final RecyclerView definitionsView = findViewById(R.id.definitions_view);
+        definitionsView.setAdapter(definitionsAdapter);
+        definitionsView.setLayoutManager(new LinearLayoutManager(this));
 
         // Set the lookup button action
         buttonLookup.setOnClickListener(v -> doLookup(editLookup.getText().toString()));
@@ -125,44 +128,18 @@ public class DictActivity extends Activity {
      * Display the returned definitions, if any.
      */
     protected void displayDefinitions(String[] entries) {
-        // Reset the definition display
-        linearLayout.removeAllViews();
-
-        // LayoutParams for all of the definition TextViews
-        final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-
-        // Create and display the definition TextViews
-        int i = 0;
+        final List<CharSequence> formattedEntries = new ArrayList<>();
         for (final String entry : entries) {
-            if (i % 2 == 0) {
-                // Format and display dictionary information line
-                final SpannableString dictionary = new SpannableString(entry);
-                dictionary.setSpan(new StyleSpan(Typeface.BOLD), 0, dictionary.length(), 0);
-                final TextView dictionaryView = new TextView(this);
-                dictionaryView.setLayoutParams(lp);
-                dictionaryView.setText(dictionary);
-                linearLayout.addView(dictionaryView);
-            } else {
-                // Format and display definition
-                final SpannableString definition = formatDefinition(entry);
-                final TextView definitionView = new TextView(this);
-                definitionView.setLayoutParams(lp);
-                definitionView.setText(definition);
-                // Make links in definition clickable
-                definitionView.setMovementMethod(LinkMovementMethod.getInstance());
-                linearLayout.addView(definitionView);
-            }
-
-            ++i;
+            formattedEntries.add(formatDefinition(entry));
         }
+
+        this.definitionsAdapter.setEntries(formattedEntries);
     }
 
     private static final char LINK_START = '{';
     private static final char LINK_END = '}';
     private static final char ITALICS = '\\';
+    private static final char NEWLINE = '\n';
 
     /**
      * Format plain definition to have links.
@@ -175,6 +152,7 @@ public class DictActivity extends Activity {
 
         int linkStart = -1, adjLinkStart = -1, adjItalicsStart = -1;
         int pos = 0, adjPos = 0;
+        boolean source = true;
         for (final char c : definition.toCharArray()) {
             switch (c) {
                 case LINK_START:
@@ -199,6 +177,12 @@ public class DictActivity extends Activity {
                         adjItalicsStart = adjPos;
                     }
                     break;
+                case NEWLINE:
+                    if (source) {
+                        spans.add(new Span<>(new StyleSpan(Typeface.BOLD), 0, adjPos));
+                        source = false;
+                    }
+                    // FALL-THROUGH
                 default:
                     definitionBuilder.append(c);
                     ++adjPos;

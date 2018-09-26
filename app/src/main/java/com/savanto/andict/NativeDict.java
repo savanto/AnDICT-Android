@@ -1,9 +1,17 @@
 package com.savanto.andict;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
+
 final class NativeDict {
     static {
         System.loadLibrary("android_ffi");
     }
 
-    static native String[] define(String server, int port, String database, String word);
+    @WorkerThread
+    static native String[] define(
+            @NonNull String server,
+            int port,
+            @NonNull String database,
+            @NonNull String word);
 }
