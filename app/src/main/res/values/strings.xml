@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AnDICT</string>
+    <string name="app_name" translatable="false">AnDICT</string>
 
 <!-- DictSettingsActivity -->
     <string name="dict_settings">AnDICT Settings</string>
 
     <string name="pref_server_title">DICT server address</string>
     <string name="pref_server_message">Enter a hostname or IP address of the DICT server to use for lookups (eg. dict.org)\n</string>
-    <string name="pref_server_default">dict.org</string>
+    <string name="pref_server_default" translatable="false">dict.org</string>
 
     <string name="pref_port_title">DICT server port</string>
     <string name="pref_port_message">Enter the port of the DICT server (usually 2628)\n</string>
@@ -24,15 +24,15 @@
     <string name="first_match">First match</string>
 
 <!-- PortPreferences -->
-    <string name="button_add">+</string>
-    <string name="button_sub">-</string>
+    <string name="button_add" translatable="false">+</string>
+    <string name="button_sub" translatable="false">-</string>
     <string name="invalid_title">Invalid port number</string>
     <string name="invalid_message">Valid port number range: $1%d - $2%d</string>
-    <string name="invalid_button">@android:string/ok</string>
+    <string name="invalid_button" translatable="false">@android:string/ok</string>
 
 
 <!-- DictActivity -->
-    <string name="dict_activity">@string/app_name</string>
+    <string name="dict_activity" translatable="false">@string/app_name</string>
 
     <string name="edit_hint">Enter a word to look up:</string>
     <string name="button_lookup">Lookup</string>
