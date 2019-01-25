@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AnDICT</string>
+
+<!-- DictSettingsActivity -->
+    <string name="dict_settings">Настройки AnDICT</string>
+
+    <string name="pref_server_key">pref_server_key</string>
+    <string name="pref_server_title">Адрес DICT-сервера</string>
+    <string name="pref_server_message">Введите имя DICT-сервера или его IP адрес (напр., dict.org)\n</string>
+    <string name="pref_server_default">dict.org</string>
+
+    <string name="pref_port_key">pref_port_key</string>
+    <string name="pref_port_title">Порт DICT-сервера</string>
+    <string name="pref_port_message">Введите порт DICT-сервера (обычно 2628)\n</string>
+    <string name="port_hint">Port</string>
+
+    <string name="pref_database_key">pref_database_key</string>
+    <string name="pref_database_title">Стратегия поиска</string>
+    <string name="pref_database_default">Все совпадения</string>
+    <string-array name="pref_database_entries">
+        <item>Все совпадения</item>
+        <item>Первое совпадение</item>
+    </string-array>
+    <string name="all_matches">Все совпадения</string>
+    <string name="first_match">Первое совпадение</string>
+
+<!-- PortPreferences -->
+    <string name="button_add">+</string>
+    <string name="button_sub">-</string>
+    <string name="invalid_title">Недопустимый номер порта</string>
+    <string name="invalid_message">Допустимый диапазон портов: $1%d - $2%d</string>
+    <string name="invalid_button">@android:string/ok</string>
+
+
+<!-- DictActivity -->
+    <string name="dict_activity">AnDICT</string>
+
+    <string name="edit_hint">Введите слово, которое хотите найти:</string>
+    <string name="button_lookup">Искать</string>
+    <string name="progress">Поиск слова …</string>
+
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_about">О программе</string>
+
+</resources>
