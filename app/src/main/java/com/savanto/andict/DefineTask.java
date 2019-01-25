@@ -3,7 +3,10 @@ package com.savanto.andict;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.view.inputmethod.InputMethodManager;
 
 import java.lang.ref.WeakReference;
@@ -60,14 +63,15 @@ final class DefineTask extends AsyncTask<Void, Void, String[]> {
     protected void onPostExecute(String[] entries) {
         final DictActivity activity = activityRef.get();
         if (activity != null) {
+            final Resources res = activity.getResources();
             if (entries != null && entries.length != 0) {
-                activity.displayStatus(Message.CONNECTED + server);
+                activity.displayStatus(Message.get(res, Message.CONNECTED, this.server));
                 activity.displayDefinitions(entries);
             } else if (entries != null) {
-                activity.displayStatus(Message.NO_RESULT);
+                activity.displayStatus(Message.get(res, Message.NO_RESULT));
                 activity.displayDefinitions(new String[]{});
             } else {
-                activity.displayStatus(Message.NETWORK_ERROR);
+                activity.displayStatus(Message.get(res, Message.NETWORK_ERROR));
             }
         }
 
@@ -79,8 +83,12 @@ final class DefineTask extends AsyncTask<Void, Void, String[]> {
     }
 
     private static class Message {
-        private static final String NETWORK_ERROR = "Network error.";
-        private static final String CONNECTED = "Connected to ";
-        private static final String NO_RESULT = "No result.";
+        private static final @StringRes int NETWORK_ERROR = R.string.message_network_error;
+        private static final @StringRes int CONNECTED = R.string.message_connected;
+        private static final @StringRes int NO_RESULT = R.string.message_no_result;
+
+        static @NonNull String get(@NonNull Resources res, @StringRes int message, Object... formatArgs) {
+            return res.getString(message, formatArgs);
+        }
     }
 }

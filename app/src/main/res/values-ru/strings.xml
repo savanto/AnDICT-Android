@@ -27,4 +27,9 @@
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О программе</string>
 
+<!-- Messages -->
+    <string name="message_network_error">Ошибка сети.</string>
+    <string name="message_connected">Подключение к %s</string>
+    <string name="message_no_result">Не найдено.</string>
+
 </resources>

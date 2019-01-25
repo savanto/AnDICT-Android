@@ -40,4 +40,8 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
 
+<!-- Messages -->
+    <string name="message_network_error">Network error.</string>
+    <string name="message_connected">Connected to %s</string>
+    <string name="message_no_result">No result.</string>
 </resources>
