@@ -11,19 +11,13 @@
     <string name="pref_port_message">Введите порт DICT-сервера (обычно 2628)\n</string>
     <string name="port_hint">Порт</string>
 
-    <string name="pref_database_title">Стратегия поиска</string>
-    <string name="pref_database_default">Все совпадения</string>
-    <string-array name="pref_database_entries">
-        <item>Все совпадения</item>
-        <item>Первое совпадение</item>
-    </string-array>
+    <string name="pref_database_title">Базы данных для поиска</string>
     <string name="all_matches">Все совпадения</string>
     <string name="first_match">Первое совпадение</string>
 
 <!-- PortPreferences -->
     <string name="invalid_title">Недопустимый номер порта</string>
     <string name="invalid_message">Допустимый диапазон портов: $1%d - $2%d</string>
-
 
 <!-- DictActivity -->
     <string name="edit_hint">Введите слово, которое хотите найти:</string>

@@ -14,11 +14,11 @@
     <string name="pref_port_message">Enter the port of the DICT server (usually 2628)\n</string>
     <string name="port_hint">Port</string>
 
-    <string name="pref_database_title">Search strategy</string>
-    <string name="pref_database_default">All matches</string>
+    <string name="pref_database_title">Databases to search</string>
+    <string name="pref_database_default" translatable="false">@string/all_matches</string>
     <string-array name="pref_database_entries">
-        <item>All matches</item>
-        <item>First match</item>
+        <item>@string/all_matches</item>
+        <item>@string/first_match</item>
     </string-array>
     <string name="all_matches">All matches</string>
     <string name="first_match">First match</string>
@@ -29,7 +29,6 @@
     <string name="invalid_title">Invalid port number</string>
     <string name="invalid_message">Valid port number range: $1%d - $2%d</string>
     <string name="invalid_button" translatable="false">@android:string/ok</string>
-
 
 <!-- DictActivity -->
     <string name="dict_activity" translatable="false">@string/app_name</string>
