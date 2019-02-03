@@ -13,7 +13,7 @@
 
     <string name="pref_database_title">Искать в словаре:</string>
     <string name="all_matches">Все</string>
-    <string name="first_match">Первом, где найдено</string>
+    <string name="first_match">Первый, где найдено</string>
 
 <!-- PortPreferences -->
     <string name="invalid_title">Недопустимый номер порта</string>
