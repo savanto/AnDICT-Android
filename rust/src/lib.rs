@@ -1,17 +1,14 @@
-extern crate jni;
-extern crate dictp;
-
 #[cfg(target_os="android")]
 #[allow(non_snake_case)]
 pub mod android {
     use jni::JNIEnv;
-    use jni::objects::{JClass, JObject, JString};
+    use jni::objects::{JClass, JObject, JString, JValue};
     use jni::sys::{jint, jobjectArray};
 
-    use dictp::{Database, Definition, Dict};
+    use dictp::{Database, Dict, commands::Define, responses::Definition};
 
     #[no_mangle]
-    pub extern fn Java_com_savanto_andict_NativeDict_define<'a>(
+    pub extern fn Java_com_savanto_andict_NativeDict_define(
         env: JNIEnv,
         _class: JClass,
         server: JString,
@@ -20,39 +17,34 @@ pub mod android {
         word: JString,
     ) -> jobjectArray {
         let server: String = env.get_string(server).unwrap().into();
-        let port: u32 = port as u32;
+        let port: u16 = port as u16;
         let database: String = env.get_string(database).unwrap().into();
-        let database: Database = match database.as_str() {
-            "*" => Database::AllMatches,
-            "!" => Database::FirstMatch,
-            _ => Database::Source(database),
-        };
+        let database: Database = database.parse().unwrap();
         let word: String = env.get_string(word).unwrap().into();
 
-        let java_string_class = env.find_class("java/lang/String").unwrap();
-        match Dict::define(&server, port, &word, &database) {
-            Ok(dict) => {
-                let entries: Vec<Definition> = dict.collect();
-                let entries_array = env.new_object_array(
-                    entries.len() as i32,
-                    java_string_class,
-                    JObject::null()
-                ).unwrap();
+        let mut dict = Dict::connect(&server, port).unwrap();
+        let cmd = Define::new(database, word);
+        let defns: Vec<Definition> = dict.define(cmd).unwrap().collect();
 
-                for (index, entry) in entries.iter().enumerate() {
-                    let defn = format!("{}\n{}", entry.source, entry.definition);
-                    env.set_object_array_element(
-                        entries_array,
-                        index as i32,
-                        JObject::from(env.new_string(defn).unwrap())
-                    ).unwrap();
-                }
+        let java_definition_class = env.find_class("com/savanto/andict/Definition").unwrap();
 
-                entries_array
-            },
-            Err(_) => {
-                env.new_object_array(0, java_string_class, JObject::null()).unwrap()
-            },
+        let definitions = env.new_object_array(
+            defns.len() as i32,
+            java_definition_class,
+            JObject::null()
+        ).unwrap();
+
+        for (idx, defn) in defns.iter().enumerate() {
+            let database = env.new_string(&defn.database).unwrap();
+            let definition = env.new_string(&defn.definition).unwrap();
+            let definition = env.new_object(
+                java_definition_class,
+                "(Ljava/lang/String;Ljava/lang/String;)V",
+                &[JValue::Object(database.into()), JValue::Object(definition.into())],
+            ).unwrap();
+            env.set_object_array_element(definitions, idx as i32, definition).unwrap();
         }
+
+        definitions
     }
 }
