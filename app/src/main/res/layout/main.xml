@@ -39,6 +39,12 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/definitions_view"
         android:layout_width="match_parent"

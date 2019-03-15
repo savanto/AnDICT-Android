@@ -107,14 +107,25 @@ public class DictActivity extends Activity implements DefinitionFormatter {
                 DictSettingsActivity.PREF_PORT_KEY,
                 PortPreference.DEFAULT_PORT
         );
-        final String database = prefs.getString(
+
+        final String allMatches = this.getString(R.string.all_matches);
+        final String firstMatch = this.getString(R.string.first_match);
+        final String storedDatabase = prefs.getString(
                 DictSettingsActivity.PREF_DATABASE_KEY,
                 getString(R.string.pref_database_default)
-        ).equals(getString(R.string.first_match)) ? "! " : "* ";
+        );
+        final String database;
+        if (allMatches.equals(storedDatabase)) {
+            database = "*";
+        } else if (firstMatch.equals(storedDatabase)) {
+            database = "!";
+        } else {
+            database = storedDatabase;
+        }
 
         // Perform lookup on separate thread
-        defineTask = new DefineTask(DictActivity.this, server, port, database, word);
-        defineTask.execute();
+        this.defineTask = new DefineTask(DictActivity.this, server, port, database, word);
+        this.defineTask.execute();
     }
 
     /**

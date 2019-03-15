@@ -9,6 +9,7 @@
         android:id="@+id/port_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pref_margin"
         android:text="@string/pref_port_message"
         />
 
@@ -36,6 +37,8 @@
                 android:id="@+id/button_add"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pref_port_btn_margin"
+                android:layout_marginRight="@dimen/pref_port_btn_margin"
                 android:text="@string/button_add"
                 />
 
@@ -51,6 +54,8 @@
                 android:id="@+id/button_sub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pref_port_btn_margin"
+                android:layout_marginRight="@dimen/pref_port_btn_margin"
                 android:text="@string/button_sub"
                 />
 

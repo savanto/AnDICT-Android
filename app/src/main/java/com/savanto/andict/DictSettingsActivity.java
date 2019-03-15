@@ -3,8 +3,7 @@ package com.savanto.andict;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
@@ -13,9 +12,9 @@ public final class DictSettingsActivity extends PreferenceActivity {
     static final String PREF_PORT_KEY = "pref_port_key";
     static final String PREF_DATABASE_KEY = "pref_database_key";
 
-    private EditTextPreference server;
-    private PortPreference port;
-    private ListPreference database;
+    private Preference server;
+    private Preference port;
+    private Preference database;
 
     private SharedPreferences prefs;
 
@@ -28,9 +27,9 @@ public final class DictSettingsActivity extends PreferenceActivity {
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         // Get references to preferences
-        server = (EditTextPreference) findPreference(PREF_SERVER_KEY);
-        port = (PortPreference) findPreference(PREF_PORT_KEY);
-        database = (ListPreference) findPreference(PREF_DATABASE_KEY);
+        server = findPreference(PREF_SERVER_KEY);
+        port = findPreference(PREF_PORT_KEY);
+        database = findPreference(PREF_DATABASE_KEY);
 
         // Get the SharedPreferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);

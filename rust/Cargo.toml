@@ -9,7 +9,7 @@ crate-type = ["dylib"]
 
 [target.'cfg(target_os="android")'.dependencies]
 jni = { version = "0.10.2", default-features = false }
-dictp = { git = "https://gitlab.com/savanto/dictp.rs.git", tag = "v0.2.0" }
+dictp = { git = "https://gitlab.com/savanto/dictp.rs.git", tag = "v0.3.0" }
 
 [profile.release]
 lto = true
