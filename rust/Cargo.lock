@@ -2,7 +2,7 @@
 name = "android-ffi"
 version = "0.1.0"
 dependencies = [
- "dictp 0.2.0 (git+https://gitlab.com/savanto/dictp.rs.git?tag=v0.2.0)",
+ "dictp 0.3.0 (git+https://gitlab.com/savanto/dictp.rs.git?tag=v0.3.0)",
  "jni 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -77,8 +77,8 @@ dependencies = [
 
 [[package]]
 name = "dictp"
-version = "0.2.0"
-source = "git+https://gitlab.com/savanto/dictp.rs.git?tag=v0.2.0#ed99d04e568d5168b04e340972cdc95938098ce5"
+version = "0.3.0"
+source = "git+https://gitlab.com/savanto/dictp.rs.git?tag=v0.3.0#4c81f343b92517c29cb602091e8e587262491533"
 dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -253,7 +253,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum cfg-if 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "0c4e7bb64a8ebb0d856483e1e682ea3422f883c5f5615a90d51a2c82fe87fdd3"
 "checksum clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)" = "b957d88f4b6a63b9d70d5f454ac8011819c6efa7727858f458ab71c756ce2d3e"
 "checksum combine 3.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "54cedd8056314afe0d844a37a207007edf8a45f2cc452fd77629cd63c221740e"
-"checksum dictp 0.2.0 (git+https://gitlab.com/savanto/dictp.rs.git?tag=v0.2.0)" = "<none>"
+"checksum dictp 0.3.0 (git+https://gitlab.com/savanto/dictp.rs.git?tag=v0.3.0)" = "<none>"
 "checksum either 1.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3be565ca5c557d7f59e7cfcf1844f9e3033650c929c6566f511e8005f205c1d0"
 "checksum error-chain 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)" = "07e791d3be96241c77c43846b665ef1384606da2cd2a48730abe606a12906e02"
 "checksum jni 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)" = "1ecfa3b81afc64d9a6539c4eece96ac9a93c551c713a313800dade8e33d7b5c1"

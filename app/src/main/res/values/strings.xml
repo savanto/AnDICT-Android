@@ -30,6 +30,9 @@
     <string name="invalid_message">Valid port number range: $1%d - $2%d</string>
     <string name="invalid_button" translatable="false">@android:string/ok</string>
 
+<!-- DatabasePreferences -->
+    <string name="pref_database_progress">Fetching available databases…</string>
+
 <!-- DictActivity -->
     <string name="dict_activity" translatable="false">@string/app_name</string>
 

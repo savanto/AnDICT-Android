@@ -22,4 +22,14 @@ final class NativeDict {
             @NonNull String database,
             @NonNull String strategy,
             @NonNull String word);
+
+    @WorkerThread
+    static native Entity[] showStrategies(
+            @NonNull String server,
+            int port);
+
+    @WorkerThread
+    static native Entity[] showDatabases(
+            @NonNull String server,
+            int port);
 }

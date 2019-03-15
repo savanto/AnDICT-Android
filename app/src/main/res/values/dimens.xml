@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="pref_margin">26dp</dimen>
+    <dimen name="pref_port_btn_margin">32dp</dimen>
+</resources>
