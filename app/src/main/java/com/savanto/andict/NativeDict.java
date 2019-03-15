@@ -9,7 +9,7 @@ final class NativeDict {
     }
 
     @WorkerThread
-    static native String[] define(
+    static native Definition[] define(
             @NonNull String server,
             int port,
             @NonNull String database,

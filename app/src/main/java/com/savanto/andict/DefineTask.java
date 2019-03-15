@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference;
  * background-thread tasks. In this case, the task is a network
  * connection and communication with a DICT server.
  */
-final class DefineTask extends AsyncTask<Void, Void, String[]> {
+final class DefineTask extends AsyncTask<Void, Void, Definition[]> {
     private final WeakReference<DictActivity> activityRef;
     private final WeakReference<ProgressDialog> pdRef;
 
@@ -55,21 +55,21 @@ final class DefineTask extends AsyncTask<Void, Void, String[]> {
     }
 
     @Override
-    protected String[] doInBackground(Void... v) {
+    protected Definition[] doInBackground(Void... v) {
         return NativeDict.define(this.server, this.port, this.database, this.word);
     }
 
     @Override
-    protected void onPostExecute(String[] entries) {
+    protected void onPostExecute(Definition[] definitions) {
         final DictActivity activity = activityRef.get();
         if (activity != null) {
             final Resources res = activity.getResources();
-            if (entries != null && entries.length != 0) {
+            if (definitions != null && definitions.length != 0) {
                 activity.displayStatus(Message.get(res, Message.CONNECTED, this.server));
-                activity.displayDefinitions(entries);
-            } else if (entries != null) {
+                activity.displayDefinitions(definitions);
+            } else if (definitions != null) {
                 activity.displayStatus(Message.get(res, Message.NO_RESULT));
-                activity.displayDefinitions(new String[]{});
+                activity.displayDefinitions(new Definition[]{});
             } else {
                 activity.displayStatus(Message.get(res, Message.NETWORK_ERROR));
             }

@@ -10,15 +10,17 @@ declare -A ARCHS=(
   [x86]=i686-linux-android
 )
 
-# Make standalone toolchains.
-for arch in "${!ARCHS[@]}"; do
-  target="${ARCHS[$arch]/armv7/arm}"
-  if [[ ! -d "${NDK}/toolchains/${target}/bin" ]]; then
-    "${NDK}/build/tools/make_standalone_toolchain.py" \
-      --arch "$arch" \
-      --install-dir "${NDK}/toolchains/${target}"
-  fi
-done
+rustup target add ${ARCHS[@]}
+
+## Make standalone toolchains.
+#for arch in "${!ARCHS[@]}"; do
+#  target="${ARCHS[$arch]/armv7/arm}"
+#  if [[ ! -d "${NDK}/toolchains/${target}/bin" ]]; then
+#    "${NDK}/build/tools/make_standalone_toolchain.py" \
+#      --arch "$arch" \
+#      --install-dir "${NDK}/toolchains/${target}"
+#  fi
+#done
 
 # Generate .cargo/config
 if [[ ! -r .cargo/config ]]; then

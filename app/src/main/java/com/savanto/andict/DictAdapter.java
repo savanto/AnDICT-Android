@@ -12,10 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class DictAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<CharSequence> entries = new ArrayList<>();
+    private List<Definition> definitions = new ArrayList<>();
+    private final DefinitionFormatter definitionFormatter;
 
-    void setEntries(@NonNull List<CharSequence> entries) {
-        this.entries = entries;
+    DictAdapter(@NonNull DefinitionFormatter definitionFormatter) {
+        this.definitionFormatter = definitionFormatter;
+    }
+
+    void setDefinitions(@NonNull List<Definition> definitions) {
+        this.definitions = definitions;
         this.notifyDataSetChanged();
     }
 
@@ -27,20 +32,27 @@ final class DictAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((DefinitionHolder) holder).definitionView.setText(this.entries.get(position));
+        final DefinitionHolder definitionHolder = (DefinitionHolder) holder;
+        final Definition definition = this.definitions.get(position);
+        definitionHolder.databaseView.setText(definition.database);
+        definitionHolder.definitionView.setText(this.definitionFormatter.formatDefinition(
+                definition.definition
+        ));
     }
 
     @Override
     public int getItemCount() {
-        return this.entries.size();
+        return this.definitions.size();
     }
 
     private static final class DefinitionHolder extends RecyclerView.ViewHolder {
+        private final TextView databaseView;
         private final TextView definitionView;
 
         DefinitionHolder(View itemView) {
             super(itemView);
-            this.definitionView = itemView.findViewById(R.id.definition_view);
+            this.databaseView = itemView.findViewById(R.id.definition_database);
+            this.definitionView = itemView.findViewById(R.id.definition_definition);
             this.definitionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
