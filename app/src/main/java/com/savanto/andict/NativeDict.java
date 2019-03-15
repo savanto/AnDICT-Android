@@ -14,4 +14,12 @@ final class NativeDict {
             int port,
             @NonNull String database,
             @NonNull String word);
+
+    @WorkerThread
+    static native Definition[] defineWithStrategy(
+            @NonNull String server,
+            int port,
+            @NonNull String database,
+            @NonNull String strategy,
+            @NonNull String word);
 }
