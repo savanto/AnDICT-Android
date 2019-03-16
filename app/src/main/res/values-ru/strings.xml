@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
 <!-- DictSettingsActivity -->
@@ -11,18 +11,18 @@
     <string name="pref_port_message">Введите порт DICT-сервера (обычно 2628)\n</string>
     <string name="port_hint">Порт</string>
 
-    <string name="pref_database_title">Базы данных для поиска</string>
-    <string name="all_matches">Все совпадения</string>
-    <string name="first_match">Первое совпадение</string>
+    <string name="pref_database_title">Искать в словаре:</string>
+    <string name="all_matches">Все</string>
+    <string name="first_match">Первый, где найдено</string>
 
 <!-- PortPreferences -->
     <string name="invalid_title">Недопустимый номер порта</string>
     <string name="invalid_message">Допустимый диапазон портов: $1%d - $2%d</string>
 
 <!-- DictActivity -->
-    <string name="edit_hint">Введите слово, которое хотите найти:</string>
+    <string name="edit_hint">Текст для поиска:</string>
     <string name="button_lookup">Искать</string>
-    <string name="progress">Поиск слова …</string>
+    <string name="progress">Поиск текста по словарям …</string>
 
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О программе</string>
