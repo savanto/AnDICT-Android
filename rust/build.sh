@@ -12,16 +12,6 @@ declare -A ARCHS=(
 
 rustup target add ${ARCHS[@]}
 
-## Make standalone toolchains.
-#for arch in "${!ARCHS[@]}"; do
-#  target="${ARCHS[$arch]/armv7/arm}"
-#  if [[ ! -d "${NDK}/toolchains/${target}/bin" ]]; then
-#    "${NDK}/build/tools/make_standalone_toolchain.py" \
-#      --arch "$arch" \
-#      --install-dir "${NDK}/toolchains/${target}"
-#  fi
-#done
-
 # Generate .cargo/config
 if [[ ! -r .cargo/config ]]; then
   mkdir -p .cargo
@@ -39,5 +29,7 @@ fi
 for target in "${ARCHS[@]}"; do
   export AR="${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-ar"
   export CC="${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-gcc"
+  export STRIP="${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-strip"
   cargo build --target "${target}" --release
+  "$STRIP" "target/${target}/release/libandroid_ffi.so"
 done
