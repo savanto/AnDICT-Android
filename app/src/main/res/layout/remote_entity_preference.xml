@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewSwitcher xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/database_preference_switcher"
+    android:id="@+id/entity_preference_switcher"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -12,9 +12,9 @@
         android:gravity="center"
         >
         <TextView
+            android:id="@+id/entity_preference_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/pref_database_progress"
             />
         <ProgressBar
             android:layout_width="wrap_content"
@@ -24,15 +24,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pref_margin"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="@dimen/pref_margin"
         >
         <RadioGroup
-            android:id="@+id/database_preference_choices"
+            android:id="@+id/entity_preference_choices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/pref_margin"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="@dimen/pref_margin"
             android:orientation="vertical"
             android:divider="@drawable/divider"
             android:showDividers="middle"

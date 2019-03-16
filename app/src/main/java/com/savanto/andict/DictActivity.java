@@ -97,12 +97,13 @@ public class DictActivity extends Activity implements DefinitionFormatter {
             return;
         }
 
-        // Get the server, port, and search strategy from SharedPreferences
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         final String server = prefs.getString(
                 DictSettingsActivity.PREF_SERVER_KEY,
                 getString(R.string.pref_server_default)
         );
+
         final int port = prefs.getInt(
                 DictSettingsActivity.PREF_PORT_KEY,
                 PortPreference.DEFAULT_PORT
@@ -123,8 +124,25 @@ public class DictActivity extends Activity implements DefinitionFormatter {
             database = storedDatabase;
         }
 
+        final String strategy;
+        if (prefs.getBoolean(DictSettingsActivity.PREF_STRATEGY_ENABLE_KEY, false)) {
+            strategy = prefs.getString(
+                    DictSettingsActivity.PREF_STRATEGY_KEY,
+                    this.getString(R.string.strategy_exact)
+            );
+        } else {
+            strategy = null;
+        }
+
         // Perform lookup on separate thread
-        this.defineTask = new DefineTask(DictActivity.this, server, port, database, word);
+        this.defineTask = new DefineTask(
+                DictActivity.this,
+                server,
+                port,
+                database,
+                strategy,
+                word
+        );
         this.defineTask.execute();
     }
 
