@@ -27,4 +27,20 @@
         android:title="@string/pref_database_title"
         />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_strategy_enable_key"
+        android:persistent="true"
+        android:title="@string/pref_strategy_enable"
+        />
+
+    <com.savanto.andict.StrategyPreference
+        android:defaultValue="@string/pref_strategy_default"
+        android:dialogTitle="@string/pref_strategy_title"
+        android:key="pref_strategy_key"
+        android:persistent="true"
+        android:title="@string/pref_strategy_title"
+        android:dependency="pref_strategy_enable_key"
+        />
+
 </PreferenceScreen>

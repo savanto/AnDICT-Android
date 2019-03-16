@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.inputmethod.InputMethodManager;
 
@@ -23,15 +24,23 @@ final class DefineTask extends AsyncTask<Void, Void, Definition[]> {
     private final String server;
     private final int port;
     private final String database;
+    private final String strategy;
     private final String word;
 
-    DefineTask(DictActivity activity, String server, int port, String database, String word) {
+    DefineTask(
+            DictActivity activity,
+            @NonNull String server,
+            int port,
+            @NonNull String database,
+            @Nullable String strategy,
+            @NonNull String word) {
         super();
         this.activityRef = new WeakReference<>(activity);
         this.pdRef = new WeakReference<>(new ProgressDialog(activity));
         this.server = server;
         this.port = port;
         this.database = database;
+        this.strategy = strategy;
         this.word = word;
     }
 
@@ -56,7 +65,11 @@ final class DefineTask extends AsyncTask<Void, Void, Definition[]> {
 
     @Override
     protected Definition[] doInBackground(Void... v) {
-        return NativeDict.define(this.server, this.port, this.database, this.word);
+        if (this.strategy != null) {
+            return NativeDict.defineWithStrategy(this.server, this.port, this.database, this.strategy, this.word);
+        } else {
+            return NativeDict.define(this.server, this.port, this.database, this.word);
+        }
     }
 
     @Override
