@@ -15,9 +15,16 @@
     <string name="all_matches">Все</string>
     <string name="first_match">Первый, где найдено</string>
 
+    <string name="pref_strategy_enable">Использовать стратегию поиска</string>
+    <string name="pref_strategy_title">Стратегия поиска</string>
+
 <!-- PortPreferences -->
     <string name="invalid_title">Недопустимый номер порта</string>
     <string name="invalid_message">Допустимый диапазон портов: $1%d - $2%d</string>
+
+<!-- RemoteEntityPreferences -->
+    <string name="pref_databases_progress">Извлечение списка доступных словарей на DICT-сервере…</string>
+    <string name="pref_strategies_progress">Извлечение списка доступных стратегий поиска на DICT-сервере…</string>
 
 <!-- DictActivity -->
     <string name="edit_hint">Текст для поиска:</string>
