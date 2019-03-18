@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
@@ -20,9 +21,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class DictActivity extends Activity {
+public class DictActivity extends Activity implements DefinitionFormatter {
     /**
      * User interface elements
      **/
@@ -44,7 +46,7 @@ public class DictActivity extends Activity {
         editLookup = findViewById(R.id.edit_word);
         final Button buttonLookup = findViewById(R.id.button_lookup);
         connectionStatus = findViewById(R.id.connection_status);
-        definitionsAdapter = new DictAdapter();
+        definitionsAdapter = new DictAdapter(this);
         final RecyclerView definitionsView = findViewById(R.id.definitions_view);
         definitionsView.setAdapter(definitionsAdapter);
         definitionsView.setLayoutManager(new LinearLayoutManager(this));
@@ -95,24 +97,53 @@ public class DictActivity extends Activity {
             return;
         }
 
-        // Get the server, port, and search strategy from SharedPreferences
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         final String server = prefs.getString(
                 DictSettingsActivity.PREF_SERVER_KEY,
                 getString(R.string.pref_server_default)
         );
+
         final int port = prefs.getInt(
                 DictSettingsActivity.PREF_PORT_KEY,
                 PortPreference.DEFAULT_PORT
         );
-        final String database = prefs.getString(
+
+        final String allMatches = this.getString(R.string.all_matches);
+        final String firstMatch = this.getString(R.string.first_match);
+        final String storedDatabase = prefs.getString(
                 DictSettingsActivity.PREF_DATABASE_KEY,
                 getString(R.string.pref_database_default)
-        ).equals(getString(R.string.first_match)) ? "! " : "* ";
+        );
+        final String database;
+        if (allMatches.equals(storedDatabase)) {
+            database = "*";
+        } else if (firstMatch.equals(storedDatabase)) {
+            database = "!";
+        } else {
+            database = storedDatabase;
+        }
+
+        final String strategy;
+        if (prefs.getBoolean(DictSettingsActivity.PREF_STRATEGY_ENABLE_KEY, false)) {
+            strategy = prefs.getString(
+                    DictSettingsActivity.PREF_STRATEGY_KEY,
+                    this.getString(R.string.strategy_exact)
+            );
+        } else {
+            strategy = null;
+        }
 
         // Perform lookup on separate thread
-        defineTask = new DefineTask(DictActivity.this, server, port, database, word);
-        defineTask.execute();
+        this.defineTask = new DefineTask(
+                DictActivity.this,
+                server,
+                port,
+                database,
+                strategy,
+                word
+        );
+        this.defineTask.execute();
     }
 
     /**
@@ -127,32 +158,35 @@ public class DictActivity extends Activity {
     /**
      * Display the returned definitions, if any.
      */
-    protected void displayDefinitions(String[] entries) {
-        final List<CharSequence> formattedEntries = new ArrayList<>();
-        for (final String entry : entries) {
-            formattedEntries.add(formatDefinition(entry));
-        }
-
-        this.definitionsAdapter.setEntries(formattedEntries);
+    protected void displayDefinitions(Definition[] definitions) {
+        this.definitionsAdapter.setDefinitions(Arrays.asList(definitions));
     }
 
-    private static final char LINK_START = '{';
-    private static final char LINK_END = '}';
-    private static final char ITALICS = '\\';
-    private static final char NEWLINE = '\n';
+    private final class LinkClickableSpan extends ClickableSpan {
+        private final String word;
+
+        LinkClickableSpan(String word) {
+            this.word = word;
+        }
+
+        @Override
+        public void onClick(@NonNull View widget) {
+            doLookup(this.word);
+            editLookup.setText(this.word);
+        }
+    }
 
     /**
-     * Format plain definition to have links.
+     * Format plain definition to have links, italics, and other formatting.
      *
      * @return SpannableString with the definition formatted.
      */
-    private SpannableString formatDefinition(String definition) {
+    public SpannableString formatDefinition(String definition) {
         final StringBuilder definitionBuilder = new StringBuilder();
         final List<Span> spans = new ArrayList<>();
 
         int linkStart = -1, adjLinkStart = -1, adjItalicsStart = -1;
         int pos = 0, adjPos = 0;
-        boolean source = true;
         for (final char c : definition.toCharArray()) {
             switch (c) {
                 case LINK_START:
@@ -177,12 +211,6 @@ public class DictActivity extends Activity {
                         adjItalicsStart = adjPos;
                     }
                     break;
-                case NEWLINE:
-                    if (source) {
-                        spans.add(new Span<>(new StyleSpan(Typeface.BOLD), 0, adjPos));
-                        source = false;
-                    }
-                    // FALL-THROUGH
                 default:
                     definitionBuilder.append(c);
                     ++adjPos;
@@ -199,19 +227,9 @@ public class DictActivity extends Activity {
         return definitionSpan;
     }
 
-    private final class LinkClickableSpan extends ClickableSpan {
-        private final String word;
-
-        LinkClickableSpan(String word) {
-            this.word = word;
-        }
-
-        @Override
-        public void onClick(View widget) {
-            doLookup(this.word);
-            editLookup.setText(this.word);
-        }
-    }
+    private static final char LINK_START = '{';
+    private static final char LINK_END = '}';
+    private static final char ITALICS = '\\';
 
     private static final class Span<T extends CharacterStyle> {
         private final T what;

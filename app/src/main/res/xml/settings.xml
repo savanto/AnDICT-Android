@@ -12,7 +12,6 @@
 
     <com.savanto.andict.PortPreference
         android:defaultValue="2628"
-        android:dialogMessage="@string/pref_port_message"
         android:dialogTitle="@string/pref_port_title"
         android:key="pref_port_key"
         android:numeric="integer"
@@ -20,14 +19,28 @@
         android:title="@string/pref_port_title"
         />
 
-    <ListPreference
+    <com.savanto.andict.DatabasePreference
         android:defaultValue="@string/pref_database_default"
         android:dialogTitle="@string/pref_database_title"
-        android:entries="@array/pref_database_entries"
-        android:entryValues="@array/pref_database_entries"
         android:key="pref_database_key"
         android:persistent="true"
         android:title="@string/pref_database_title"
+        />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_strategy_enable_key"
+        android:persistent="true"
+        android:title="@string/pref_strategy_enable"
+        />
+
+    <com.savanto.andict.StrategyPreference
+        android:defaultValue="@string/pref_strategy_default"
+        android:dialogTitle="@string/pref_strategy_title"
+        android:key="pref_strategy_key"
+        android:persistent="true"
+        android:title="@string/pref_strategy_title"
+        android:dependency="pref_strategy_enable_key"
         />
 
 </PreferenceScreen>

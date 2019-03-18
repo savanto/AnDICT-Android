@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation"
+    >
 
     <string name="app_name" translatable="false">AnDICT</string>
 
@@ -16,12 +18,14 @@
 
     <string name="pref_database_title">Databases to search</string>
     <string name="pref_database_default" translatable="false">@string/all_matches</string>
-    <string-array name="pref_database_entries">
-        <item>@string/all_matches</item>
-        <item>@string/first_match</item>
-    </string-array>
     <string name="all_matches">All matches</string>
     <string name="first_match">First match</string>
+
+    <string name="pref_strategy_enable">Use search strategy</string>
+    <string name="pref_strategy_title">Search strategy</string>
+    <string name="pref_strategy_default" translatable="false">@string/strategy_exact</string>
+    <string name="strategy_exact" translatable="false">exact</string>
+    <string name="strategy_prefix" translatable="false">prefix</string>
 
 <!-- PortPreferences -->
     <string name="button_add" translatable="false">+</string>
@@ -29,6 +33,10 @@
     <string name="invalid_title">Invalid port number</string>
     <string name="invalid_message">Valid port number range: $1%d - $2%d</string>
     <string name="invalid_button" translatable="false">@android:string/ok</string>
+
+<!-- RemoteEntityPreferences -->
+    <string name="pref_databases_progress">Fetching databases from dict server…</string>
+    <string name="pref_strategies_progress">Fetching strategies from dict server…</string>
 
 <!-- DictActivity -->
     <string name="dict_activity" translatable="false">@string/app_name</string>
