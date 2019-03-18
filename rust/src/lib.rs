@@ -1,21 +1,23 @@
 #[cfg(target_os="android")]
 #[allow(non_snake_case)]
 pub mod android {
+    use std::io;
+
     use jni::JNIEnv;
     use jni::objects::{JClass, JObject, JString, JValue};
     use jni::sys::{jint, jobjectArray};
 
     use dictp::{Database, Dict, Strategy, commands::Command, responses::Definition};
 
-    fn connect(env: &JNIEnv, server: JString, port: jint) -> Dict {
+    fn connect(env: &JNIEnv, server: JString, port: jint) -> io::Result<Dict> {
         let server: String = env.get_string(server).unwrap().into();
         let port: u16 = port as u16;
 
-        Dict::connect(&server, port).unwrap()
+        Dict::connect(&server, port)
     }
 
-    fn define(dict: &mut Dict, cmd: Command) -> Vec<Definition> {
-        dict.define(cmd).unwrap().collect::<Vec<Definition>>()
+    fn define(dict: &mut Dict, cmd: Command) -> io::Result<Vec<Definition>> {
+        dict.define(cmd).map(|defns| defns.collect::<Vec<Definition>>())
     }
 
     fn convert_definitions_to_java(env: &JNIEnv, defns: Vec<Definition>) -> jobjectArray {
@@ -76,11 +78,15 @@ pub mod android {
         let database: String = env.get_string(database).unwrap().into();
         let database: Database = database.parse().unwrap();
         let word: String = env.get_string(word).unwrap().into();
-        let cmd = Command::Define(database, word);
-        let mut dict: Dict = connect(&env, server, port);
-        let defns: Vec<Definition> = define(&mut dict, cmd);
+        let defns = connect(&env, server, port)
+            .and_then(|mut dict| define(&mut dict, Command::Define(database, word)))
+            .map(|defns| convert_definitions_to_java(&env, defns));
 
-        convert_definitions_to_java(&env, defns)
+        if let Ok(defns) = defns {
+            defns
+        } else {
+            JObject::null().into_inner()
+        }
     }
 
     #[no_mangle]
@@ -98,16 +104,28 @@ pub mod android {
         let strategy: String = env.get_string(strategy).unwrap().into();
         let strategy: Strategy = strategy.parse().unwrap();
         let word: String = env.get_string(word).unwrap().into();
-        let cmd = Command::Match(database, strategy, word);
-        let mut dict: Dict = connect(&env, server, port);
-        let mut defns: Vec<Definition> = Vec::new();
-        let matches = dict.r#match(cmd).unwrap();
-        for match_ in matches {
-            let cmd = Command::Define(match_.database, match_.word);
-            defns.extend(define(&mut dict, cmd));
-        }
 
-        convert_definitions_to_java(&env, defns)
+        let defns = connect(&env, server, port)
+            .and_then(|mut dict| {
+                dict.r#match(Command::Match(database, strategy, word))
+                    .map(|matches| {
+                        let mut definitions: Vec<Definition> = Vec::new();
+                        for match_ in matches {
+                            let cmd = Command::Define(match_.database, match_.word);
+                            if let Ok(defns) = define(&mut dict, cmd) {
+                                definitions.extend(defns);
+                            }
+                        }
+
+                        convert_definitions_to_java(&env, definitions)
+                    })
+            });
+
+        if let Ok(defns) = defns {
+            defns
+        } else {
+            JObject::null().into_inner()
+        }
     }
 
     #[no_mangle]
@@ -117,14 +135,20 @@ pub mod android {
         server: JString,
         port: jint,
     ) -> jobjectArray {
-        let mut dict: Dict = connect(&env, server, port);
-        let strategies = dict
-            .show_strategies()
-            .unwrap()
-            .map(|strat| (strat.strategy.to_string(), strat.description.to_string()))
-            .collect();
+        let strategies = connect(&env, server, port)
+            .and_then(|mut dict| dict.show_strategies())
+            .map(|strategies| {
+                strategies
+                    .map(|strat| (strat.strategy.to_string(), strat.description.to_string()))
+                    .collect::<Vec<(String, String)>>()
+            })
+            .map(|strategies| convert_entities_to_java(&env, strategies));
 
-        convert_entities_to_java(&env, strategies)
+        if let Ok(strategies) = strategies {
+            strategies
+        } else {
+            JObject::null().into_inner()
+        }
     }
 
     #[no_mangle]
@@ -134,13 +158,18 @@ pub mod android {
         server: JString,
         port: jint,
     ) -> jobjectArray {
-        let mut dict: Dict = connect(&env, server, port);
-        let databases = dict
-            .show_databases()
-            .unwrap()
-            .map(|db| (db.database.to_string(), db.description.to_string()))
-            .collect();
+        let databases = connect(&env, server, port)
+            .and_then(|mut dict| dict.show_databases())
+            .map(|databases| {
+                databases.map(|db| (db.database.to_string(), db.description.to_string()))
+                .collect()
+            })
+            .map(|databases| convert_entities_to_java(&env, databases));
 
-        convert_entities_to_java(&env, databases)
+        if let Ok(databases) = databases {
+            databases
+        } else {
+            JObject::null().into_inner()
+        }
     }
 }

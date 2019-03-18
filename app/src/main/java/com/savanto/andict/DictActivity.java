@@ -13,6 +13,7 @@ import android.text.SpannableString;
 import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,9 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DictActivity extends Activity implements DefinitionFormatter {
-    /**
-     * User interface elements
-     **/
+    static final String LOGTAG = "ANDICT";
+
     private DictAdapter definitionsAdapter;
     private TextView connectionStatus; // TextView displaying the status of the lookup
     private EditText editLookup;       // EditText into which user enters word to lookup
@@ -79,8 +79,15 @@ public class DictActivity extends Activity implements DefinitionFormatter {
     @Override
     protected void onPause() {
         super.onPause();
-        // Kill DefineTask, if running
+        this.cancelTask();
+    }
+
+    /**
+     *  Kill DefineTask, if running
+     */
+    private void cancelTask() {
         if (defineTask != null && ! defineTask.isCancelled()) {
+            Log.d(LOGTAG, "DictActivity: cancel task");
             defineTask.cancel(true);
         }
     }
@@ -94,6 +101,7 @@ public class DictActivity extends Activity implements DefinitionFormatter {
     private void doLookup(String word) {
         // Input check
         if (word.isEmpty()) {
+            Log.d(LOGTAG, "DictActivity: no word, nothing to do");
             return;
         }
 
@@ -135,6 +143,7 @@ public class DictActivity extends Activity implements DefinitionFormatter {
         }
 
         // Perform lookup on separate thread
+        this.cancelTask();
         this.defineTask = new DefineTask(
                 DictActivity.this,
                 server,

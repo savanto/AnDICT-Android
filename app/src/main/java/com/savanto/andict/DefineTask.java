@@ -8,9 +8,12 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
 import java.lang.ref.WeakReference;
+
+import static com.savanto.andict.DictActivity.LOGTAG;
 
 /**
  * DefineTask class extends Android's AsyncTask to allow
@@ -66,8 +69,10 @@ final class DefineTask extends AsyncTask<Void, Void, Definition[]> {
     @Override
     protected Definition[] doInBackground(Void... v) {
         if (this.strategy != null) {
+            Log.d(LOGTAG, "DefineTask: match + define");
             return NativeDict.defineWithStrategy(this.server, this.port, this.database, this.strategy, this.word);
         } else {
+            Log.d(LOGTAG, "DefineTask: define");
             return NativeDict.define(this.server, this.port, this.database, this.word);
         }
     }
@@ -78,12 +83,15 @@ final class DefineTask extends AsyncTask<Void, Void, Definition[]> {
         if (activity != null) {
             final Resources res = activity.getResources();
             if (definitions != null && definitions.length != 0) {
+                Log.d(LOGTAG, "DefineTask: found " + definitions.length + " definitions");
                 activity.displayStatus(Message.get(res, Message.CONNECTED, this.server));
                 activity.displayDefinitions(definitions);
             } else if (definitions != null) {
+                Log.d(LOGTAG, "DefineTask: no result");
                 activity.displayStatus(Message.get(res, Message.NO_RESULT));
                 activity.displayDefinitions(new Definition[]{});
             } else {
+                Log.d(LOGTAG, "DefineTask: error");
                 activity.displayStatus(Message.get(res, Message.NETWORK_ERROR));
             }
         }
