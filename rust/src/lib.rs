@@ -1,13 +1,14 @@
 #[cfg(target_os="android")]
 #[allow(non_snake_case)]
 pub mod android {
+    use std::collections::HashSet;
     use std::io;
 
     use jni::JNIEnv;
     use jni::objects::{JClass, JObject, JString, JValue};
     use jni::sys::{jint, jobjectArray};
 
-    use dictp::{Database, Dict, Strategy, commands::Command, responses::Definition};
+    use dictp::{Database, Dict, Strategy, commands::Command, responses::{Definition, Match}};
 
     fn connect(env: &JNIEnv, server: JString, port: jint) -> io::Result<Dict> {
         let server: String = env.get_string(server).unwrap().into();
@@ -108,12 +109,17 @@ pub mod android {
         let defns = connect(&env, server, port)
             .and_then(|mut dict| {
                 dict.r#match(Command::Match(database, strategy, word))
+                    .map(|matches| matches.collect::<Vec<Match>>())
                     .map(|matches| {
                         let mut definitions: Vec<Definition> = Vec::new();
+                        let mut unique_matches = HashSet::new();
                         for match_ in matches {
-                            let cmd = Command::Define(match_.database, match_.word);
-                            if let Ok(defns) = define(&mut dict, cmd) {
-                                definitions.extend(defns);
+                            if ! unique_matches.contains(&match_) {
+                                unique_matches.insert(match_.clone());
+                                let cmd = Command::Define(match_.database, match_.word);
+                                if let Ok(defns) = define(&mut dict, cmd) {
+                                    definitions.extend(defns);
+                                }
                             }
                         }
 
