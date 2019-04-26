@@ -18,7 +18,13 @@ pub mod android {
     }
 
     fn define(dict: &mut Dict, cmd: Command) -> io::Result<Vec<Definition>> {
-        dict.define(cmd).map(|defns| defns.collect::<Vec<Definition>>())
+        dict.define(cmd).map(|defns| {
+            if let Some(defns) = defns {
+                defns.collect::<Vec<Definition>>()
+            } else {
+                Vec::new()
+            }
+        })
     }
 
     fn convert_definitions_to_java(env: &JNIEnv, defns: Vec<Definition>) -> jobjectArray {
@@ -109,7 +115,13 @@ pub mod android {
         let defns = connect(&env, server, port)
             .and_then(|mut dict| {
                 dict.r#match(Command::Match(database, strategy, word))
-                    .map(|matches| matches.collect::<Vec<Match>>())
+                    .map(|matches| {
+                        if let Some(matches) = matches {
+                            matches.collect::<Vec<Match>>()
+                        } else {
+                            Vec::new()
+                        }
+                    })
                     .map(|matches| {
                         let mut definitions: Vec<Definition> = Vec::new();
                         let mut unique_matches = HashSet::new();
