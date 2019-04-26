@@ -2,7 +2,8 @@
 
 set -eu
 
-NDK=$1
+MIN_SDK=$1
+NDK=$2
 declare -A ARCHS=(
   [arm64]=aarch64-linux-android
   [arm]=armv7-linux-androideabi
@@ -19,17 +20,15 @@ if [[ ! -r .cargo/config ]]; then
   for target in "${ARCHS[@]}"; do
     cat <<-EOF >>.cargo/config
 [target.${target}]
-ar = "${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-ar"
-linker = "${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-clang"
+ar = "${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/${target/armv7/arm}-ar"
+linker = "${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/${target/armv7/armv7a}${MIN_SDK}-clang"
 EOF
   done
 fi
 
 # Build libraries.
 for target in "${ARCHS[@]}"; do
-  export AR="${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-ar"
-  export CC="${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-gcc"
-  export STRIP="${NDK}/toolchains/${target/armv7/arm}/bin/${target/armv7/arm}-strip"
+  STRIP="${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/${target/armv7/arm}-strip"
   cargo build --target "${target}" --release
   "$STRIP" "target/${target}/release/libandroid_ffi.so"
 done
