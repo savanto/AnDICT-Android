@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.inputmethod.InputMethodManager;
 
@@ -16,22 +17,30 @@ import java.lang.ref.WeakReference;
  * background-thread tasks. In this case, the task is a network
  * connection and communication with a DICT server.
  */
-final class DefineTask extends AsyncTask<Void, Void, String[]> {
+final class DefineTask extends AsyncTask<Void, Void, Definition[]> {
     private final WeakReference<DictActivity> activityRef;
     private final WeakReference<ProgressDialog> pdRef;
 
     private final String server;
     private final int port;
     private final String database;
+    private final String strategy;
     private final String word;
 
-    DefineTask(DictActivity activity, String server, int port, String database, String word) {
+    DefineTask(
+            DictActivity activity,
+            @NonNull String server,
+            int port,
+            @NonNull String database,
+            @Nullable String strategy,
+            @NonNull String word) {
         super();
         this.activityRef = new WeakReference<>(activity);
         this.pdRef = new WeakReference<>(new ProgressDialog(activity));
         this.server = server;
         this.port = port;
         this.database = database;
+        this.strategy = strategy;
         this.word = word;
     }
 
@@ -55,21 +64,25 @@ final class DefineTask extends AsyncTask<Void, Void, String[]> {
     }
 
     @Override
-    protected String[] doInBackground(Void... v) {
-        return NativeDict.define(this.server, this.port, this.database, this.word);
+    protected Definition[] doInBackground(Void... v) {
+        if (this.strategy != null) {
+            return NativeDict.defineWithStrategy(this.server, this.port, this.database, this.strategy, this.word);
+        } else {
+            return NativeDict.define(this.server, this.port, this.database, this.word);
+        }
     }
 
     @Override
-    protected void onPostExecute(String[] entries) {
+    protected void onPostExecute(Definition[] definitions) {
         final DictActivity activity = activityRef.get();
         if (activity != null) {
             final Resources res = activity.getResources();
-            if (entries != null && entries.length != 0) {
+            if (definitions != null && definitions.length != 0) {
                 activity.displayStatus(Message.get(res, Message.CONNECTED, this.server));
-                activity.displayDefinitions(entries);
-            } else if (entries != null) {
+                activity.displayDefinitions(definitions);
+            } else if (definitions != null) {
                 activity.displayStatus(Message.get(res, Message.NO_RESULT));
-                activity.displayDefinitions(new String[]{});
+                activity.displayDefinitions(new Definition[]{});
             } else {
                 activity.displayStatus(Message.get(res, Message.NETWORK_ERROR));
             }
