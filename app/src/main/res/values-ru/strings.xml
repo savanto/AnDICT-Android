@@ -34,6 +34,8 @@
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О программе</string>
 
+    <string name="clipboard_copied">Словарная статья была скопирована в Буфер обмена.</string>
+
 <!-- Messages -->
     <string name="message_network_error">Ошибка сети.</string>
     <string name="message_connected">Подключение к %s</string>
