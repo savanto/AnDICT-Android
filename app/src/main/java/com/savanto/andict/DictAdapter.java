@@ -1,5 +1,8 @@
 package com.savanto.andict;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
@@ -7,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +42,15 @@ final class DictAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         definitionHolder.definitionView.setText(this.definitionFormatter.formatDefinition(
                 definition.definition
         ));
+        definitionHolder.definitionView.setOnLongClickListener(v -> {
+            final Context context = v.getContext();
+            final ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            if (clipboard != null) {
+                clipboard.setPrimaryClip(ClipData.newPlainText(definition.database, definition.definition));
+                Toast.makeText(context, R.string.clipboard_copied, Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
     }
 
     @Override
